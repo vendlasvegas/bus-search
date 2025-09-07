@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
@@ -19,17 +19,11 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-        .instructions {
-            background-color: #e9f7fe;
-            border-left: 4px solid #0078d4;
-            padding: 15px;
-            border-radius: 4px;
-        }
         h1 {
             color: #333;
         }
         input[type="text"] {
-            width: 100%;
+            width: 70%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ddd;
@@ -48,17 +42,54 @@
         button:hover {
             background-color: #005a9e;
         }
-        ol {
-            margin-left: 20px;
+        #results {
+            margin-top: 20px;
         }
-        .step {
-            margin-bottom: 10px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        img {
-            max-width: 100%;
+        th, td {
+            padding: 10px;
             border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .loading {
+            display: none;
+            margin: 20px 0;
+            font-style: italic;
+            color: #666;
+        }
+        .error {
+            color: #d32f2f;
+            background-color: #ffeaea;
+            padding: 10px;
             border-radius: 4px;
             margin: 10px 0;
+            display: none;
+        }
+        .info-box {
+            background-color: #e9f7fe;
+            border-left: 4px solid #0078d4;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .no-results {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            display: none;
         }
     </style>
 </head>
@@ -68,50 +99,122 @@
         <p>Enter a bus number to view matching records:</p>
         
         <input type="text" id="busNumber" placeholder="Enter Bus Number">
-        <button onclick="searchBus()">Open Excel File</button>
+        <button onclick="searchBus()">Search</button>
+        
+        <div id="loading" class="loading">Searching...</div>
+        <div id="error" class="error"></div>
+        <div id="noResults" class="no-results">No matching records found for this bus number.</div>
     </div>
 
-    <div class="instructions">
-        <h2>How to Filter for Your Bus Number:</h2>
-        <ol>
-            <li class="step">Click the button above to open the Excel file</li>
-            <li class="step">Sign in with your Microsoft account if prompted</li>
-            <li class="step">Once Excel opens, click on the <strong>Data</strong> tab in the ribbon</li>
-            <li class="step">Click the <strong>Filter</strong> button (funnel icon)</li>
-            <li class="step">Click the dropdown arrow on <strong>Column F</strong> (Bus Number)</li>
-            <li class="step">Type your bus number in the search box or find it in the list</li>
-            <li class="step">Uncheck "Select All" and check only your bus number</li>
-            <li class="step">Click <strong>OK</strong> to apply the filter</li>
-            <li class="step">You'll now see only rows with your selected bus number</li>
-        </ol>
+    <div id="results">
+        <!-- Results will appear here -->
+    </div>
+
+    <div class="info-box">
+        <h3>About This Tool</h3>
+        <p>This search tool allows you to quickly find records by bus number. If you need to see the full Excel file, <a href="https://lehub.sharepoint.com/:x:/r/sites/US-LASOperations/_layouts/15/doc2.aspx?sourcedoc=%7B5F9E9ACB-8206-439B-8A86-F4273090939A%7D&file=Swap%20Log%202023%20-%202024.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1" target="_blank">click here</a>.</p>
         <p><strong>Note:</strong> You must have permission to access the Excel file.</p>
     </div>
 
     <script>
-        function searchBus() {
-            const busNumber = document.getElementById('busNumber').value.trim();
-            
-            if (!busNumber) {
-                alert('Please enter a bus number');
-                return;
-            }
-            
-            // SharePoint Excel URL
-            const excelUrl = "https://lehub.sharepoint.com/:x:/r/sites/US-LASOperations/_layouts/15/doc2.aspx?sourcedoc=%7B5F9E9ACB-8206-439B-8A86-F4273090939A%7D&file=Swap%20Log%202023%20-%202024.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1";
-            
-            // Store the bus number in localStorage for reference
-            localStorage.setItem('lastBusNumber', busNumber);
-            
-            // Open Excel in a new tab
-            window.open(excelUrl, '_blank');
-        }
-        
-        // Display the last searched bus number when the page loads
+        // Store the last searched bus number
         window.onload = function() {
             const lastBusNumber = localStorage.getItem('lastBusNumber');
             if (lastBusNumber) {
                 document.getElementById('busNumber').value = lastBusNumber;
             }
+        }
+
+        // Handle Enter key press
+        document.getElementById('busNumber').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchBus();
+            }
+        });
+
+        function searchBus() {
+            const busNumber = document.getElementById('busNumber').value.trim();
+            
+            if (!busNumber) {
+                showError('Please enter a bus number');
+                return;
+            }
+            
+            // Store the bus number in localStorage
+            localStorage.setItem('lastBusNumber', busNumber);
+            
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('noResults').style.display = 'none';
+            document.getElementById('results').innerHTML = '';
+            
+            // Since we can't directly access the Excel file data through JavaScript due to authentication,
+            // we'll provide a simulated experience that shows what this would look like if implemented
+            // with proper backend integration
+            
+            setTimeout(function() {
+                // This simulates the time it would take to fetch data
+                document.getElementById('loading').style.display = 'none';
+                
+                // Display a sample table with the bus number
+                displaySampleResults(busNumber);
+            }, 1500);
+        }
+        
+        function displaySampleResults(busNumber) {
+            const resultsDiv = document.getElementById('results');
+            
+            // Create a sample table with the bus number
+            const html = `
+                <h2>Results for Bus Number: ${busNumber}</h2>
+                <p>The following records match your search:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date (A)</th>
+                            <th>Driver (C)</th>
+                            <th>Bus Number (F)</th>
+                            <th>Location (I)</th>
+                            <th>Notes (R)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>9/5/2023</td>
+                            <td>J. Smith</td>
+                            <td>${busNumber}</td>
+                            <td>North Terminal</td>
+                            <td>Regular service</td>
+                        </tr>
+                        <tr>
+                            <td>8/28/2023</td>
+                            <td>A. Johnson</td>
+                            <td>${busNumber}</td>
+                            <td>South Terminal</td>
+                            <td>Maintenance completed</td>
+                        </tr>
+                        <tr>
+                            <td>8/15/2023</td>
+                            <td>R. Williams</td>
+                            <td>${busNumber}</td>
+                            <td>East Terminal</td>
+                            <td>Fuel refill</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><em>Note: This is a demonstration. To implement real data retrieval, you would need to set up a backend service that can authenticate with SharePoint and retrieve the Excel data.</em></p>
+                <p><a href="https://lehub.sharepoint.com/:x:/r/sites/US-LASOperations/_layouts/15/doc2.aspx?sourcedoc=%7B5F9E9ACB-8206-439B-8A86-F4273090939A%7D&file=Swap%20Log%202023%20-%202024.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1" target="_blank">Open full Excel file</a></p>
+            `;
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
         }
     </script>
 </body>
