@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
@@ -17,6 +17,13 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .instructions {
+            background-color: #e9f7fe;
+            border-left: 4px solid #0078d4;
+            padding: 15px;
+            border-radius: 4px;
         }
         h1 {
             color: #333;
@@ -41,10 +48,17 @@
         button:hover {
             background-color: #005a9e;
         }
-        .instructions {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
+        ol {
+            margin-left: 20px;
+        }
+        .step {
+            margin-bottom: 10px;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -54,11 +68,23 @@
         <p>Enter a bus number to view matching records:</p>
         
         <input type="text" id="busNumber" placeholder="Enter Bus Number">
-        <button onclick="searchBus()">Search</button>
-        
-        <div class="instructions">
-            <p><strong>Note:</strong> You must be authorized to access the Excel file.</p>
-        </div>
+        <button onclick="searchBus()">Open Excel File</button>
+    </div>
+
+    <div class="instructions">
+        <h2>How to Filter for Your Bus Number:</h2>
+        <ol>
+            <li class="step">Click the button above to open the Excel file</li>
+            <li class="step">Sign in with your Microsoft account if prompted</li>
+            <li class="step">Once Excel opens, click on the <strong>Data</strong> tab in the ribbon</li>
+            <li class="step">Click the <strong>Filter</strong> button (funnel icon)</li>
+            <li class="step">Click the dropdown arrow on <strong>Column F</strong> (Bus Number)</li>
+            <li class="step">Type your bus number in the search box or find it in the list</li>
+            <li class="step">Uncheck "Select All" and check only your bus number</li>
+            <li class="step">Click <strong>OK</strong> to apply the filter</li>
+            <li class="step">You'll now see only rows with your selected bus number</li>
+        </ol>
+        <p><strong>Note:</strong> You must have permission to access the Excel file.</p>
     </div>
 
     <script>
@@ -70,14 +96,22 @@
                 return;
             }
             
-            // REPLACE THIS URL with your actual Excel file URL
-            const excelBaseUrl = "YOUR_EXCEL_FILE_URL_HERE";
+            // SharePoint Excel URL
+            const excelUrl = "https://lehub.sharepoint.com/:x:/r/sites/US-LASOperations/_layouts/15/doc2.aspx?sourcedoc=%7B5F9E9ACB-8206-439B-8A86-F4273090939A%7D&file=Swap%20Log%202023%20-%202024.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1";
             
-            // Open Excel with the filter applied
-            window.open(excelBaseUrl, '_blank');
+            // Store the bus number in localStorage for reference
+            localStorage.setItem('lastBusNumber', busNumber);
             
-            // Note: The ideal implementation would include filter parameters in the URL,
-            // but this requires knowing the exact Excel Online URL structure for your file
+            // Open Excel in a new tab
+            window.open(excelUrl, '_blank');
+        }
+        
+        // Display the last searched bus number when the page loads
+        window.onload = function() {
+            const lastBusNumber = localStorage.getItem('lastBusNumber');
+            if (lastBusNumber) {
+                document.getElementById('busNumber').value = lastBusNumber;
+            }
         }
     </script>
 </body>
