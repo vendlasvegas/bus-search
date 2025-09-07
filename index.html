@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Number Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .search-container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #005a9e;
+        }
+        .instructions {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <h1>Bus Number Search</h1>
+        <p>Enter a bus number to view matching records:</p>
+        
+        <input type="text" id="busNumber" placeholder="Enter Bus Number">
+        <button onclick="searchBus()">Search</button>
+        
+        <div class="instructions">
+            <p><strong>Note:</strong> You must be authorized to access the Excel file.</p>
+        </div>
+    </div>
+
+    <script>
+        function searchBus() {
+            const busNumber = document.getElementById('busNumber').value.trim();
+            
+            if (!busNumber) {
+                alert('Please enter a bus number');
+                return;
+            }
+            
+            // REPLACE THIS URL with your actual Excel file URL
+            const excelBaseUrl = "YOUR_EXCEL_FILE_URL_HERE";
+            
+            // Open Excel with the filter applied
+            window.open(excelBaseUrl, '_blank');
+            
+            // Note: The ideal implementation would include filter parameters in the URL,
+            // but this requires knowing the exact Excel Online URL structure for your file
+        }
+    </script>
+</body>
+</html>
