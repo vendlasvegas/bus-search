@@ -53,6 +53,15 @@
             border: 1px solid #ddd;
             margin-top: 20px;
         }
+        .columns-note {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .filter-highlight {
+            background-color: #ffffcc;
+            padding: 3px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -69,12 +78,12 @@
         <ol>
             <li>Enter a bus number in the search box above</li>
             <li>Click "Search"</li>
-            <li>The Excel sheet will load</li>
-            <li>When Excel loads, click on column F (Bus Number)</li>
-            <li>Click the filter icon (funnel) that appears</li>
-            <li>Type your bus number in the search box</li>
+            <li>When Excel loads, <span class="filter-highlight">click the filter button in the Data tab</span> if filters aren't showing</li>
+            <li>Click the filter dropdown on column F (Bus Number)</li>
+            <li>Type your bus number in the search box or uncheck "Select All" and check only your bus number</li>
             <li>Click OK to see only matching rows</li>
         </ol>
+        <p class="columns-note">Important columns: A (Date), C (Driver), F (Bus Number), I (Location), R (Notes)</p>
         <p><strong>Note:</strong> You must have permission to access this Excel file.</p>
     </div>
     
@@ -103,7 +112,8 @@
 
         function loadExcel() {
             const excelContainer = document.getElementById('excelFrame');
-            excelContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" scrolling="no" src="https://lehub.sharepoint.com/sites/US-LASOperations/_layouts/15/Doc.aspx?sourcedoc={5f9e9acb-8206-439b-8a86-f4273090939a}&action=embedview&ActiveCell='SWAP%20LOG%20Transdev%202025'!A1&Item='SWAP%20LOG%20Transdev%202025'!Print_Area&wdAllowInteractivity=True&wdHideGridlines=False&wdDownloadButton=True&wdInConfigurator=False"></iframe>`;
+            // Use a named range or view that focuses on columns A, C, F, I, R if possible
+            excelContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" scrolling="yes" src="https://lehub.sharepoint.com/sites/US-LASOperations/_layouts/15/Doc.aspx?sourcedoc={5f9e9acb-8206-439b-8a86-f4273090939a}&action=embedview&ActiveCell='SWAP%20LOG%20Transdev%202025'!F1&Item='SWAP%20LOG%20Transdev%202025'!Print_Area&wdAllowInteractivity=True&wdHideGridlines=False&wdDownloadButton=True&wdInConfigurator=False"></iframe>`;
         }
 
         function filterExcel() {
@@ -117,9 +127,9 @@
             // Store the bus number in localStorage
             localStorage.setItem('lastBusNumber', busNumber);
             
-            // Reload the Excel with focus on column F
+            // Reload the Excel with focus on column F (Bus Number)
             const excelContainer = document.getElementById('excelFrame');
-            excelContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" scrolling="no" src="https://lehub.sharepoint.com/sites/US-LASOperations/_layouts/15/Doc.aspx?sourcedoc={5f9e9acb-8206-439b-8a86-f4273090939a}&action=embedview&ActiveCell='SWAP%20LOG%20Transdev%202025'!F1&Item='SWAP%20LOG%20Transdev%202025'!Print_Area&wdAllowInteractivity=True&wdHideGridlines=False&wdDownloadButton=True&wdInConfigurator=False"></iframe>`;
+            excelContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" scrolling="yes" src="https://lehub.sharepoint.com/sites/US-LASOperations/_layouts/15/Doc.aspx?sourcedoc={5f9e9acb-8206-439b-8a86-f4273090939a}&action=embedview&ActiveCell='SWAP%20LOG%20Transdev%202025'!F1&Item='SWAP%20LOG%20Transdev%202025'!Print_Area&wdAllowInteractivity=True&wdHideGridlines=False&wdDownloadButton=True&wdInConfigurator=False"></iframe>`;
         }
     </script>
 </body>
